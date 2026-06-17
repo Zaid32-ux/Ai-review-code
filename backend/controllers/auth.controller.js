@@ -77,3 +77,11 @@ export const logout = catchAsyncErrors(async (req, res) => {
     });
 });
 
+
+// ---------------- GET USER ----------------
+export const getUser = catchAsyncErrors((req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+});
