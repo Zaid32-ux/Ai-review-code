@@ -84,3 +84,24 @@ export const updateReview = catchAsyncErrors(async (req, res) => {
     prompt: updatedPrompt,
   });
 });
+
+// ---------------- DELETE REVIEW ----------------
+export const deleteReview = catchAsyncErrors(async (req, res) => {
+  const { id } = req.params;
+
+  const prompt = await Prompt.findById(id);
+
+  if (!prompt) {
+    return res.status(404).json({
+      success: false,
+      message: "Prompt not found!",
+    });
+  }
+
+  await prompt.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Review deleted successfully!",
+  });
+});
