@@ -39,3 +39,48 @@ export const getPastPrompts = catchAsyncErrors(async (req, res) => {
     prompts,
   });
 });
+
+// ---------------- UPDATE REVIEW ----------------
+export const updateReview = catchAsyncErrors(async (req, res) => {
+  const { id } = req.params;
+  const { code } = req.body;
+
+  if (!id) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid ID!",
+    });
+  }
+
+  const aiResponse = await axios.post(
+    "http://localhost:4000/ai/get-review",
+    { code }
+  );
+
+  const newReview = aiResponse.data.review;
+
+  const updatedPrompt = await Prompt.findByIdAndUpdate(
+    id,
+    {
+      code,
+      review: newReview,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedPrompt) {
+    return res.status(404).json({
+      success: false,
+      message: "Prompt not found!",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Review updated successfully!",
+    prompt: updatedPrompt,
+  });
+});
